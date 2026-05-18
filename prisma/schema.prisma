@@ -1,0 +1,169 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for Admin, Manager, and Staff
+model User {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String   @unique
+  password    String   // hashed password
+  name        String
+  role        UserRole
+  isActive    Boolean  @default(true)
+  managerId   String?  // For staff users
+  manager     User?    @relation("StaffManager", fields: [managerId], references: [id])
+  staff       User[]   @relation("StaffManager")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  uploadedLeads Lead[]
+  assignedLeads Lead[]
+  callLogs      CallLog[]
+  sessions      StaffSession[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  STAFF
+}
+
+// Loan Categories (Master Control)
+model LoanCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  leads Lead[]
+
+  @@map("loan_categories")
+}
+
+// Lead model for customer data
+model Lead {
+  id             String      @id @default(cuid())
+  name           String
+  phone          String      @unique
+  email          String?
+  city           String
+  state          String?
+  loanCategoryId String
+  loanCategory   LoanCategory @relation(fields: [loanCategoryId], references: [id])
+  stage          LeadStage   @default(NEW)
+  retryCount     Int         @default(0)
+  nextRetryAt    DateTime?
+  isCompleted    Boolean     @default(false)
+  uploadedBy     String      // Manager who uploaded
+  uploader       User        @relation("UploadedLeads", fields: [uploadedBy], references: [id])
+  assignedTo     String?     // Staff assigned to
+  assignee       User?       @relation("AssignedLeads", fields: [assignedTo], references: [id])
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  // Relations
+  callLogs CallLog[]
+  pendingDetails PendingDetail[]
+
+  @@map("leads")
+}
+
+enum LeadStage {
+  NEW
+  CONTACTED
+  INTERESTED
+  NOT_INTERESTED
+  FOLLOW_UP
+  CLOSED
+}
+
+// Pending Details for leads (half-filled data from Excel)
+model PendingDetail {
+  id       String @id @default(cuid())
+  leadId   String
+  lead     Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  field    String // e.g., "emi_from_bank", "loan_amount", etc.
+  value    String?
+  isFilled Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("pending_details")
+}
+
+// Call Logs for monitoring
+model CallLog {
+  id           String     @id @default(cuid())
+  leadId       String
+  lead         Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  staffId      String
+  staff        User       @relation(fields: [staffId], references: [id])
+  callDuration Int?       // in seconds
+  callResult   CallResult
+  customerResponse String?
+  attemptNumber Int        @default(1)
+  notes        String?
+  createdAt    DateTime   @default(now())
+
+  @@map("call_logs")
+}
+
+enum CallResult {
+  CONNECTED
+  NOT_CONNECTED
+  BUSY
+  NO_ANSWER
+  WRONG_NUMBER
+  NOT_INTERESTED
+}
+
+// Staff Session Monitoring
+model StaffSession {
+  id            String    @id @default(cuid())
+  staffId       String
+  staff         User      @relation(fields: [staffId], references: [id])
+  loginTime     DateTime  @default(now())
+  logoutTime    DateTime?
+  totalWorkTime Int?      // in minutes
+  totalBreakTime Int?     // in minutes
+  status        SessionStatus @default(ACTIVE)
+  createdAt     DateTime  @default(now())
+
+  @@map("staff_sessions")
+}
+
+enum SessionStatus {
+  ACTIVE
+  ON_BREAK
+  OFFLINE
+}
+
+// Excel Upload Logs
+model ExcelUpload {
+  id             String   @id @default(cuid())
+  filename       String
+  totalRecords   Int
+  successfulRecords Int
+  failedRecords  Int
+  uploadedBy     String   // Manager ID
+  loanCategoryId String
+  uploadedAt     DateTime @default(now())
+
+  @@map("excel_uploads")
+}

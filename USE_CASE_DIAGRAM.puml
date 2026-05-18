@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+
+actor Admin
+actor Manager
+actor Staff
+
+rectangle CRM_System {
+
+  Admin --> (Login)
+  Manager --> (Login)
+  Staff --> (Login)
+
+  Admin --> (Upload Excel File)
+  Manager --> (Upload Excel File)
+
+  Admin --> (Select Loan Type)
+  Manager --> (Select Loan Type)
+
+  Admin --> (Manage Users)
+  Admin --> (View Reports)
+
+  Staff --> (View Assigned Customers)
+  Staff --> (Call Customer)
+  Staff --> (Update Customer Response)
+
+  (Upload Excel File) --> (Store Customer Data)
+  (Call Customer) --> (Auto Dial System)
+  (Update Customer Response) --> (Save Call Status)
+
+}
+
+@enduml

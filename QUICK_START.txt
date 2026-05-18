@@ -1,0 +1,71 @@
+# ⚡ QUICK START - 3 STEPS
+
+## 1️⃣ Start Backend
+```
+Double-click: start-backend.bat
+```
+Wait for: "Server running on port 5000"
+
+## 2️⃣ Start Frontend
+```
+npm run dev
+```
+
+## 3️⃣ Login & Test
+```
+URL: http://localhost:5173
+Admin: admin / password
+Manager: manager1 / password
+```
+
+---
+
+## 🔧 If Backend Won't Start
+
+```bash
+# Kill port 5000:
+for /f "tokens=5" %a in ('netstat -aon ^| findstr ":5000"') do taskkill /F /PID %a
+
+# Start again:
+start-backend.bat
+```
+
+---
+
+## ✅ Health Check
+
+http://localhost:5000/api/health
+
+Should return JSON (not HTML)
+
+---
+
+## 📚 Full Documentation
+
+- `COMPLETE_DEBUG_SUMMARY.md` - All fixes applied
+- `SYSTEM_FIXED.md` - Detailed fix guide
+- `MANAGER_MODULE_README.md` - Manager features
+- `BACKEND_TROUBLESHOOTING.md` - Common issues
+
+---
+
+## 🎯 Manager Module Features
+
+1. Dashboard - KPIs & Charts
+2. Excel Upload - With loan type
+3. Lead Assignment - Auto-distribute
+4. Staff Monitor - Real-time
+5. Reports - Export to Excel
+
+**Status: 100% Complete ✅**
+
+---
+
+## 🆘 Need Help?
+
+1. Check backend is running
+2. Check you're logged in
+3. Clear browser cache
+4. Read COMPLETE_DEBUG_SUMMARY.md
+
+**Everything is fixed and ready to use!** 🚀

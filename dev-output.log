@@ -1,0 +1,29 @@
+
+> Auto Caller CRM Design@0.1.0 dev
+> vite
+
+[2m10:14:27 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m Re-optimizing dependencies because vite config has changed
+Port 3000 is in use, trying another one...
+
+  [32m[1mVITE[22m v6.3.5[39m  [2mready in [0m[1m588[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3001[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m10:14:27 pm[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Cannot apply unknown utility class `glass-card`
+  Plugin: [35m@tailwindcss/vite:generate:serve[39m
+  File: [36mC:/Users/A/Desktop/CRM2/src/index.css[39m
+[2m10:14:28 pm[22m [31m[1m[vite][22m[39m [31mInternal server error: Cannot apply unknown utility class `glass-card`[39m
+  Plugin: [35m@tailwindcss/vite:generate:serve[39m
+  File: [36mC:/Users/A/Desktop/CRM2/src/index.css[39m
+      at onInvalidCandidate (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:21:1511)
+      at $e (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:16:38457)
+      at file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:21:355
+      at $r (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:3:1733)
+      at I (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:3:1377)
+      at Ce (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:21:172)
+      at Hi (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:38:294)
+      at async ma (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:38:631)
+      at async wf (file:///c:/Users/A/Desktop/CRM2/node_modules/tailwindcss/dist/lib.mjs:38:1406)
+      at async su (file:///c:/Users/A/Desktop/CRM2/node_modules/@tailwindcss/node/dist/index.mjs:10:3457)
+
+c:\Users\A\Desktop\CRM2>
