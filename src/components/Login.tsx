@@ -13,9 +13,9 @@ const ROLES = [
 ];
 
 const DEMO: Record<string, { username: string; password: string }> = {
-  admin:   { username: 'admin',    password: 'password' },
-  manager: { username: 'manager1', password: 'password' },
-  staff:   { username: 'staff1',   password: 'password' },
+  admin:   { username: 'admin',    password: 'admin123' },
+  manager: { username: 'manager1', password: 'manager123' },
+  staff:   { username: 'staff1',   password: 'staff123' },
 };
 
 const STATS = [
@@ -28,7 +28,7 @@ const STATS = [
 export function Login({ onLogin }: LoginProps) {
   const [selectedRole, setSelectedRole] = useState<UserRole>('admin');
   const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('password');
+  const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
