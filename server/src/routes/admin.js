@@ -1,11 +1,10 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
 const { authenticateToken, adminOnly } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 const moment = require('moment');
+const prisma = require('../db');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // All admin routes require authentication and admin role
 router.use(authenticateToken);

@@ -1,11 +1,10 @@
 const express = require('express');
 const multer = require('multer');
 const xlsx = require('xlsx');
-const { PrismaClient } = require('@prisma/client');
 const { authenticateToken, managerOrAdmin } = require('../middleware/auth');
+const prisma = require('../db');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Configure multer for file uploads
 const upload = multer({

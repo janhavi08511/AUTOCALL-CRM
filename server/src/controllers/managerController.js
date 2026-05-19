@@ -1,6 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
+const prisma = require('../db');
 
 // Dashboard KPIs
 exports.getDashboardStats = async (req, res) => {

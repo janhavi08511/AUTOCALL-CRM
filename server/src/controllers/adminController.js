@@ -1,7 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
-
-const prisma = new PrismaClient();
+const prisma = require('../db');
 
 // Create new user (Admin, Manager, Staff)
 exports.createUser = async (req, res) => {
