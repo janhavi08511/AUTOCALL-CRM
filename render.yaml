@@ -15,11 +15,10 @@ services:
       - key: PORT
         value: 5000
 
-  - type: web
+  - type: static
     name: auto-caller-crm
-    env: static
     buildCommand: npm install && npm run build
-    publishPath: build
+    staticPublishPath: build
     routes:
       - type: rewrite
         source: /*
