@@ -26,8 +26,8 @@ model User {
   updatedAt   DateTime @updatedAt
 
   // Relations
-  uploadedLeads Lead[]
-  assignedLeads Lead[]
+  uploadedLeads Lead[] @relation("UploadedBy")
+  assignedLeads Lead[] @relation("AssignedTo")
   callLogs      CallLog[]
   sessions      StaffSession[]
 
@@ -71,9 +71,9 @@ model Lead {
   nextRetryAt    DateTime?
   isCompleted    Boolean     @default(false)
   uploadedBy     String      // Manager who uploaded
-  uploader       User        @relation("UploadedLeads", fields: [uploadedBy], references: [id])
+  uploader       User        @relation("UploadedBy", fields: [uploadedBy], references: [id])
   assignedTo     String?     // Staff assigned to
-  assignee       User?       @relation("AssignedLeads", fields: [assignedTo], references: [id])
+  assignee       User?       @relation("AssignedTo", fields: [assignedTo], references: [id])
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
