@@ -16,7 +16,12 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://frontend-ez2b.onrender.com',
+    /\.onrender\.com$/
+  ],
   credentials: true
 }));
 
