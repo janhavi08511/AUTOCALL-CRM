@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Upload, FileSpreadsheet, AlertCircle, CheckCircle, X } from 'lucide-react';
+import { uploadAPI } from '../../services/api';
 
 interface LoanCategory {
   id: string;
@@ -29,17 +30,9 @@ export function ExcelUpload() {
   const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    fetch('http://localhost:5000/api/upload/loan-categories', {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setLoanCategories(data);
-      })
-      .catch(() => {
-        // fallback: keep empty, user will see empty dropdown
-      });
+    uploadAPI.getLoanCategories()
+      .then(res => { if (Array.isArray(res.data)) setLoanCategories(res.data); })
+      .catch(() => {});
   }, []);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -140,31 +133,20 @@ export function ExcelUpload() {
       formData.append('file', file);
       formData.append('loanCategoryId', selectedCategory);
 
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/upload/excel', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
+      const res = await uploadAPI.uploadExcel(formData);
+      const result = res.data;
+      setSuccess({
+        totalRecords: result.uploadLog.totalRecords,
+        insertedRecords: result.uploadLog.successfulRecords,
+        skippedDuplicates: result.uploadLog.skippedDuplicates,
+        loanCategory: result.loanCategory
       });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setSuccess({
-          totalRecords: result.uploadLog.totalRecords,
-          insertedRecords: result.uploadLog.successfulRecords,
-          skippedDuplicates: result.uploadLog.skippedDuplicates,
-          loanCategory: result.loanCategory
-        });
-        setFile(null);
-        setPreview([]);
-        setRecordCount(0);
-        setSelectedCategory('');
-      } else {
-        setError(result.error || 'Upload failed');
-      }
-    } catch (err) {
-      setError('Failed to upload file');
+      setFile(null);
+      setPreview([]);
+      setRecordCount(0);
+      setSelectedCategory('');
+    } catch (err: any) {
+      setError(err?.response?.data?.error || 'Failed to upload file');
     } finally {
       setUploading(false);
     }

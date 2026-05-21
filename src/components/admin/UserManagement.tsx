@@ -86,12 +86,7 @@ export function UserManagement() {
     if (resetPwd.newPassword !== resetPwd.confirm) { setError('Passwords do not match'); return; }
     setSaving(true); setError('');
     try {
-      const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api/admin/users/${selected?.id}/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ newPassword: resetPwd.newPassword }),
-      });
+      await adminAPI.resetPassword(selected?.id!, resetPwd.newPassword);
       setModal(null);
     } catch { setError('Reset failed'); }
     finally { setSaving(false); }

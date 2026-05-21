@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Search, Filter, Download, Eye, Phone, Calendar, User, MapPin, Tag, RefreshCw } from 'lucide-react';
+import { Search, Filter, Download, Phone, Calendar, User, MapPin, Tag, RefreshCw } from 'lucide-react';
+import { adminAPI } from '../../services/api';
 
 interface Lead {
   id: string;
@@ -72,7 +73,6 @@ export function LeadOversight() {
     endDate: ''
   });
 
-  // Fetch data
   useEffect(() => {
     fetchLeads();
     fetchLoanCategories();
@@ -83,11 +83,9 @@ export function LeadOversight() {
   const fetchLeads = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      
-      const queryParams = new URLSearchParams({
-        page: pagination.page.toString(),
-        limit: pagination.limit.toString(),
+      const res = await adminAPI.getLeads({
+        page: pagination.page,
+        limit: pagination.limit,
         ...(filters.loanType && { loanType: filters.loanType }),
         ...(filters.city && { city: filters.city }),
         ...(filters.manager && { manager: filters.manager }),
@@ -96,81 +94,31 @@ export function LeadOversight() {
         ...(filters.startDate && { startDate: filters.startDate }),
         ...(filters.endDate && { endDate: filters.endDate })
       });
-
-      const response = await fetch(`/api/admin/leads?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setLeads(data.leads);
-        setPagination(prev => ({
-          ...prev,
-          total: data.total,
-          totalPages: data.totalPages
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching leads:', error);
-    } finally {
-      setLoading(false);
-    }
+      setLeads(res.data.leads);
+      setPagination(prev => ({ ...prev, total: res.data.total, totalPages: res.data.totalPages }));
+    } catch {}
+    finally { setLoading(false); }
   };
 
   const fetchLoanCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/loan-categories', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setLoanCategories(data);
-      }
-    } catch (error) {
-      console.error('Error fetching loan categories:', error);
-    }
+      const res = await adminAPI.getLoanCategories();
+      setLoanCategories(res.data);
+    } catch {}
   };
 
   const fetchManagers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/users?role=MANAGER', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setManagers(data);
-      }
-    } catch (error) {
-      console.error('Error fetching managers:', error);
-    }
+      const res = await adminAPI.getUsers('MANAGER');
+      setManagers(res.data.users ?? res.data ?? []);
+    } catch {}
   };
 
   const fetchStaff = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/admin/users?role=STAFF', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setStaff(data);
-      }
-    } catch (error) {
-      console.error('Error fetching staff:', error);
-    }
+      const res = await adminAPI.getUsers('STAFF');
+      setStaff(res.data.users ?? res.data ?? []);
+    } catch {}
   };
 
   const handleFilterChange = (key: string, value: string) => {
@@ -185,9 +133,7 @@ export function LeadOversight() {
 
   const handleExport = async () => {
     try {
-      const token = localStorage.getItem('token');
-      
-      const queryParams = new URLSearchParams({
+      const res = await adminAPI.getLeads({
         ...(filters.loanType && { loanType: filters.loanType }),
         ...(filters.city && { city: filters.city }),
         ...(filters.manager && { manager: filters.manager }),
@@ -195,30 +141,23 @@ export function LeadOversight() {
         ...(filters.stage && { stage: filters.stage }),
         ...(filters.startDate && { startDate: filters.startDate }),
         ...(filters.endDate && { endDate: filters.endDate }),
-        export: 'true'
+        limit: 10000
       });
-
-      const response = await fetch(`/api/admin/leads/export?${queryParams}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `leads-export-${new Date().toISOString().split('T')[0]}.xlsx`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-    } catch (error) {
-      console.error('Error exporting leads:', error);
-      alert('Failed to export leads');
-    }
+      const leads = res.data.leads;
+      const csv = [
+        ['Name','Phone','City','State','Loan Type','Stage','Assigned To','Created'].join(','),
+        ...leads.map((l: any) => [
+          l.name, l.phone, l.city, l.state || '', l.loanCategory.name,
+          l.stage, l.assignee?.name || 'Unassigned',
+          new Date(l.createdAt).toLocaleDateString()
+        ].join(','))
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `leads-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click(); URL.revokeObjectURL(url);
+    } catch { alert('Failed to export leads'); }
   };
 
   const getStageColor = (stage: string) => {

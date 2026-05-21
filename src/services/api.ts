@@ -21,13 +21,17 @@ export const authAPI = {
 
 export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard/kpi'),
-  getUsers: (role) => api.get('/admin/users', { params: { role } }),
+  getUsers: (role?) => api.get('/admin/users', { params: { role } }),
   createUser: (data) => api.post('/admin/users', data),
   updateUser: (id, data) => api.put(`/admin/users/${id}`, data),
+  resetPassword: (id, newPassword) => api.post(`/admin/users/${id}/reset-password`, { newPassword }),
   getLoanCategories: () => api.get('/admin/loan-categories'),
   createLoanCategory: (data) => api.post('/admin/loan-categories', data),
-  getLeads: (params) => api.get('/admin/leads', { params }),
-  getCallLogs: (params) => api.get('/admin/call-logs', { params })
+  updateLoanCategory: (id, data) => api.put(`/admin/loan-categories/${id}`, data),
+  getLeads: (params?) => api.get('/admin/leads', { params }),
+  getCallLogs: (params?) => api.get('/admin/call-logs', { params }),
+  getStaffSessions: () => api.get('/admin/staff-sessions'),
+  getStaffStatus: () => api.get('/admin/staff-status'),
 };
 
 export const managerAPI = {
