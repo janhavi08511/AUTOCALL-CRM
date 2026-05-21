@@ -32,6 +32,7 @@ export const adminAPI = {
   getCallLogs: (params?) => api.get('/admin/call-logs', { params }),
   getStaffSessions: () => api.get('/admin/staff-sessions'),
   getStaffStatus: () => api.get('/admin/staff-status'),
+  assignLeads: (data) => api.post('/admin/leads/assign', data),
 };
 
 export const managerAPI = {

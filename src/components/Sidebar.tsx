@@ -19,8 +19,9 @@ interface SidebarProps {
 const ADMIN_TABS = [
   { id: 'dashboard',       label: 'Dashboard',       icon: LayoutDashboard, group: 'Overview' },
   { id: 'loan-categories', label: 'Loan Categories',  icon: Tag,             group: 'Overview' },
+  { id: 'upload',          label: 'Lead Upload',      icon: Upload,          group: 'Leads' },
+  { id: 'leads',           label: 'Lead Oversight',   icon: Eye,             group: 'Leads' },
   { id: 'users',           label: 'User Management',  icon: Users,           group: 'Management' },
-  { id: 'leads',           label: 'Lead Oversight',   icon: Eye,             group: 'Management' },
   { id: 'calls',           label: 'Call Monitoring',  icon: Phone,           group: 'Management' },
   { id: 'sessions',        label: 'Staff Sessions',   icon: Coffee,          group: 'Management' },
   { id: 'reports',         label: 'Reports & Export', icon: Download,        group: 'Analytics' },

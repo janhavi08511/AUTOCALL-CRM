@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Eye, EyeOff, Search, X, Tag } from 'lucide-react';
+import { adminAPI } from '../../services/api';
 
 interface LoanCategory {
   id: string;
@@ -37,104 +38,34 @@ export function LoanCategoryManagement() {
 
   const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/loan-categories', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-    } catch (error) {
-      console.error('Error fetching loan categories:', error);
-    } finally {
-      setLoading(false);
-    }
+      const res = await adminAPI.getLoanCategories();
+      setCategories(res.data);
+    } catch {}
+    finally { setLoading(false); }
   };
 
   const handleCreateCategory = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/admin/loan-categories', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        await fetchCategories();
-        setShowCreateModal(false);
-        resetForm();
-      } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to create category');
-      }
-    } catch (error) {
-      console.error('Error creating category:', error);
-      alert('Failed to create category');
-    }
+      await adminAPI.createLoanCategory(formData);
+      await fetchCategories();
+      setShowCreateModal(false); resetForm();
+    } catch (e: any) { alert(e?.response?.data?.error || 'Failed to create category'); }
   };
 
   const handleUpdateCategory = async () => {
     if (!selectedCategory) return;
-
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/loan-categories/${selectedCategory.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        await fetchCategories();
-        setShowEditModal(false);
-        resetForm();
-        setSelectedCategory(null);
-      } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to update category');
-      }
-    } catch (error) {
-      console.error('Error updating category:', error);
-      alert('Failed to update category');
-    }
+      await adminAPI.updateLoanCategory(selectedCategory.id, formData);
+      await fetchCategories();
+      setShowEditModal(false); resetForm(); setSelectedCategory(null);
+    } catch (e: any) { alert(e?.response?.data?.error || 'Failed to update category'); }
   };
 
   const handleToggleStatus = async (category: LoanCategory) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/admin/loan-categories/${category.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          ...category,
-          isActive: !category.isActive
-        })
-      });
-
-      if (response.ok) {
-        await fetchCategories();
-      } else {
-        const error = await response.json();
-        alert(error.error || 'Failed to update category');
-      }
-    } catch (error) {
-      console.error('Error toggling category status:', error);
-      alert('Failed to update category');
-    }
+      await adminAPI.updateLoanCategory(category.id, { ...category, isActive: !category.isActive });
+      await fetchCategories();
+    } catch (e: any) { alert(e?.response?.data?.error || 'Failed to update category'); }
   };
 
   const resetForm = () => {

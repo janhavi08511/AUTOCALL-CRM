@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { AdminDashboardView } from './admin/AdminDashboardView';
 import { UserManagement } from './admin/UserManagement';
 import { LoanCategoryManagement } from './admin/LoanCategoryManagement';
-import { ExcelUpload } from './admin/ExcelUpload';
+import { AdminLeadUpload } from './admin/AdminLeadUpload';
 import { LeadOversight } from './admin/LeadOversight';
 import { CallMonitoring } from './admin/CallMonitoring';
 import { StaffSessionMonitoring } from './admin/StaffSessionMonitoring';
@@ -33,6 +33,7 @@ export function AdminDashboard({ user, onLogout, darkMode, toggleDarkMode }: Adm
         <Header user={user} onLogout={onLogout} darkMode={darkMode} toggleDarkMode={toggleDarkMode} onMenuClick={() => setMobileOpen(true)} />
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           {activeTab === 'dashboard'       && <AdminDashboardView />}
+          {activeTab === 'upload'          && <AdminLeadUpload />}
           {activeTab === 'loan-categories' && <LoanCategoryManagement />}
           {activeTab === 'users'           && <UserManagement />}
           {activeTab === 'leads'           && <LeadOversight />}
